@@ -1,0 +1,19 @@
+# ビルド時に不要なファイルを除外
+.git
+.gitignore
+.dockerignore
+Dockerfile
+README.md
+*.md
+.vscode
+.idea
+.DS_Store
+tmp/
+*.tmp
+*.log
+.env
+.env.local
+coverage.txt
+coverage.html
+dist/
+build/

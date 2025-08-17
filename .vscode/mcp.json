@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "openapi": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-v", "${workspaceFolder}/openapi.yaml:/openapi.yaml", "mcp-openapi"],
+    }
+  }
+}

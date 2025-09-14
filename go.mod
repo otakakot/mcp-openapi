@@ -1,6 +1,6 @@
 module github.com/otakakot/mcp-openapi
 
-go 1.25.0
+go 1.25.1
 
 require (
 	github.com/getkin/kin-openapi v0.133.0

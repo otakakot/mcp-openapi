@@ -1,0 +1,39 @@
+{
+  "name": "Go Development Container",
+  "image": "mcr.microsoft.com/devcontainers/go:dev-1.25",
+  "runArgs": ["--network=host"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ],
+      "settings": {
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.useLanguageServer": true,
+        "go.gopath": "/go",
+        "go.goroot": "/usr/local/go",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "chat.tools.autoApprove": true
+      }
+    }
+  },
+  "forwardPorts": [
+    8000
+  ],
+  "postCreateCommand": "go version && go mod tidy",
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+  "containerEnv": {
+    "GO111MODULE": "on",
+    "GOPROXY": "https://proxy.golang.org,direct",
+    "GOSUMDB": "sum.golang.org"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  }
+}

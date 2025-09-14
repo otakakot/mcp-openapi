@@ -89,9 +89,9 @@ func resolveOpenAPIPath(path string) (string, error) {
 
 func (s *OpenAPIServer) GetAPIDetails(
 	ctx context.Context,
-	cc *mcp.ServerSession,
-	params *mcp.CallToolParamsFor[GetAPIDetailsParams],
-) (*mcp.CallToolResultFor[any], error) {
+	req *mcp.CallToolRequest,
+	params GetAPIDetailsParams,
+) (*mcp.CallToolResult, any, error) {
 	var apiDetails *APIDetails
 
 	for path, pathItem := range s.doc.Paths.Map() {
@@ -107,7 +107,7 @@ func (s *OpenAPIServer) GetAPIDetails(
 		}
 
 		for method, operation := range operations {
-			if operation != nil && operation.OperationID == params.Arguments.OperationID {
+			if operation != nil && operation.OperationID == params.OperationID {
 				apiDetails = &APIDetails{
 					OperationID: operation.OperationID,
 					Method:      method,
@@ -164,33 +164,33 @@ func (s *OpenAPIServer) GetAPIDetails(
 	}
 
 	if apiDetails == nil {
-		return &mcp.CallToolResultFor[any]{
+		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{
-					Text: fmt.Sprintf("Operation with ID '%s' not found in the OpenAPI specification", params.Arguments.OperationID),
+					Text: fmt.Sprintf("Operation with ID '%s' not found in the OpenAPI specification", params.OperationID),
 				},
 			},
-		}, nil
+		}, nil, nil
 	}
 
 	jsonData, err := json.MarshalIndent(apiDetails, "", "  ")
 	if err != nil {
-		return &mcp.CallToolResultFor[any]{
+		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{
 					Text: fmt.Sprintf("Failed to marshal API details: %v", err),
 				},
 			},
-		}, nil
+		}, nil, nil
 	}
 
-	return &mcp.CallToolResultFor[any]{
+	return &mcp.CallToolResult{
 		Content: []mcp.Content{
 			&mcp.TextContent{
 				Text: string(jsonData),
 			},
 		},
-	}, nil
+	}, nil, nil
 }
 
 func main() {
@@ -213,7 +213,7 @@ func main() {
 		openAPIServer.GetAPIDetails,
 	)
 
-	if err := server.Run(context.Background(), mcp.NewStdioTransport()); err != nil {
+	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		log.Fatal(err)
 	}
 }
